@@ -15,7 +15,12 @@
 /* ===== BASE ===== */
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans",sans-serif;background:var(--bg);color:var(--text)}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans",sans-serif;
+  background:var(--bg);color:var(--text);
+  overflow-x:hidden;
+}
 .bg-app{background:var(--bg);color:var(--text);min-height:100vh}
 .text-app{color:var(--text)} .muted{color:var(--muted)}
 
@@ -24,35 +29,65 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,"N
 :root[data-theme="light"] .nav-blur{background:rgba(255,255,255,.7)}
 .nav{display:flex;align-items:center;gap:16px;padding:12px 20px;max-width:1200px;margin:0 auto}
 .brand{font-weight:800;letter-spacing:.4px;text-decoration:none;color:var(--text)} .brand:hover{color:var(--brand-2)}
-.nav a{color:var(--muted);text-decoration:none;font-weight:500} .nav a:hover{color:var(--text)} .spacer{flex:1 1 auto}
+.navbar .navbar-brand,.navbar .nav-link{color:var(--text)!important;text-decoration:none;font-weight:600;transition:color .2s ease}
+.navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--brand)!important}
+.navbar .nav-link.active,.navbar .nav-link[aria-current="page"]{color:var(--text)!important}
+:root[data-theme="light"] .navbar .nav-link,
+:root[data-theme="light"] .navbar .navbar-brand{color:var(--text)!important}
+.navbar-dark .navbar-toggler{border-color:rgba(255,255,255,.2)}
+.navbar-dark .navbar-toggler-icon{filter:invert(1);opacity:.9}
 
 /* LAYOUT */
-.section{padding:48px 20px} .container{max-width:1200px;margin:0 auto}
+.section{padding:48px 20px}
+.container{max-width:1200px;margin:0 auto}
 .card{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45);padding:24px}
-.hero-card{display:grid;gap:28px;grid-template-columns:260px 1fr;background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.35);padding:28px}
+
+/* HERO */
+.hero-card{
+  display:grid;gap:28px;grid-template-columns:260px 1fr;
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);border-radius:20px;
+  box-shadow:0 24px 70px rgba(0,0,0,.35);padding:28px
+}
 .hero-title{font-size:clamp(34px,4.2vw,48px);margin:4px 0 10px;font-weight:800}
 .hero-sub{color:var(--muted);max-width:60ch;margin-bottom:16px}
-.hero-cta{background:linear-gradient(90deg,var(--brand),var(--brand-2));border:0;border-radius:12px;padding:.8rem 1.4rem;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 10px 24px rgba(59,130,246,.35)}
+.hero-cta{
+  background:linear-gradient(90deg,var(--brand),var(--brand-2));
+  border:0;border-radius:12px;padding:.8rem 1.4rem;color:#fff;font-weight:700;cursor:pointer;
+  box-shadow:0 10px 24px rgba(59,130,246,.35)
+}
 .hero-cta:hover{filter:brightness(1.06)}
+img,svg,video{max-width:100%;height:auto;display:block}
+.hero-avatar,.hero-media img{border-radius:12px}
 
 /* FORMS */
-input,textarea,select{background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 14px;width:100%}
+input,textarea,select{
+  background:var(--panel-2);color:var(--text);
+  border:1px solid var(--border);border-radius:12px;
+  padding:12px 14px;width:100%
+}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 input:focus,textarea:focus,select:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px rgba(59,130,246,.35)}
+textarea{min-height:120px;resize:vertical}
+input[type=checkbox],input[type=radio]{accent-color:var(--brand)}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:10px 16px;cursor:pointer;border:0}
-.btn-primary{background:var(--brand);color:#ffffff;font-weight:600}.btn-primary:hover{background:var(--brand-2)}
+.btn-primary{background:var(--brand);color:#ffffff;font-weight:600}
+.btn-primary:hover{background:var(--brand-2)}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
 .btn-outline:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
 
 /* UTILS */
-.row{display:flex;gap:12px;flex-wrap:wrap} .col{flex:1 1 280px} label{display:block;font-size:14px;margin:8px 0} footer{opacity:.7;padding:24px 20px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1 1 280px}
+label{display:block;font-size:14px;margin:8px 0}
+footer{opacity:.7;padding:24px 20px}
 
-/* ===== DARK SANITY + фиксы белого ===== */
+/* DARK SANITY + FIXES */
 :root{color-scheme:dark}
 ::selection{background:color-mix(in oklab,var(--brand) 30%,transparent);color:var(--text)}
-pre, code, kbd, samp{background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:.15em .45em}
+pre,code,kbd,samp{background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:.15em .45em}
 pre{padding:16px;overflow:auto}
 blockquote{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--brand);color:var(--text);border-radius:12px;padding:14px 16px}
 details{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
@@ -62,99 +97,53 @@ table{width:100%;border-collapse:collapse;background:var(--panel);color:var(--te
 thead{background:var(--panel-2)}
 th,td{border:1px solid var(--border);padding:10px 12px}
 tr:nth-child(even){background:color-mix(in oklab,var(--panel) 70%,var(--panel-2))}
-select{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:12px}
-textarea{min-height:120px;resize:vertical}
-input:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{-webkit-text-fill-color:var(--text);-webkit-box-shadow:0 0 0 1000px var(--panel-2) inset !important;caret-color:var(--text)}
-input[type=checkbox],input[type=radio]{accent-color:var(--brand)}
 dialog,.modal,.dropdown,.tooltip,.popover{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:12px}
 a{color:var(--brand)} a:hover{color:var(--brand-2)}
-/* перебиваем возможные bg-white из библиотек */
-[class*="bg-white"],[class*="bg_light"],[class*="bg-#fff"]{background:var(--panel) !important}
+[class*="bg-white"],[class*="bg_light"],[class*="bg-#fff"]{background:var(--panel)!important}
 
-/* ===== DEBUG бейдж, чтобы понять, что CSS точно подключён ===== */
+/* MEDIA FRAME */
+.media-frame{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden
+}
+.media-frame iframe,.media-frame video{display:block;width:100%;aspect-ratio:16/9;border:0}
+
+/* TEXT UTILS */
+.text-muted,.form-label,.alert-success{color:var(--muted)!important}
+.card h1,.card h2,.card h3,.card h4,.card h5,.card h6,
+.card p,.card span,.card div{color:var(--text)}
+.card .muted{color:var(--muted)}
+
+/* ===== MOBILE-FIRST ===== */
+@media (max-width: 767.98px) {
+  .container {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .hero-card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  .hero-title { font-size: clamp(28px, 7vw, 48px); line-height: 1.2; }
+  .hero-sub   { font-size: clamp(16px, 4.2vw, 20px); }
+  .row > .col { flex: 1 1 100%; max-width: 100%; }
+}
+
+/* TABLET+ */
+@media (min-width: 768px) {
+  .container { max-width: 720px; }
+  .hero-card { grid-template-columns: 260px 1fr; padding: 24px; }
+  .row > .col { flex: 1 1 280px; max-width: none; }
+}
+@media (min-width: 1200px) {
+  .container { max-width: 1140px; }
+}
+
+/* DEBUG (можно убрать потом) */
 body::after{
   content:"site.css LOADED";
   position:fixed;right:10px;bottom:10px;background:#000a;color:#fff;padding:6px 10px;
-  font:12px/1 system-ui;border-radius:8px;z-index:999999;pointer-events:none;
-}
-
-
-/* Медиа-рамка для видео/iframe */
-.media-frame{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:16px;
-  overflow:hidden;
-}
-.media-frame iframe,
-.media-frame video{
-  display:block;
-  width:100%;
-  aspect-ratio:16/9;
-  border:0;
-}
-
-
-.text-muted,
-.form-label,
-.alert-success {
-  color: var(--muted) !important;
-}
-
-
-/* === FIX: контраст текста на тёмной теме === */
-.card h1, 
-.card h2, 
-.card h3, 
-.card h4, 
-.card h5, 
-.card h6,
-.card p, 
-.card span, 
-.card div {
-  color: var(--text);
-}
-
-.card .muted {
-  color: var(--muted);
-}
-
-/* YouTube iframe не красится — добавим фон вокруг */
-.media-frame {
-  background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.media-frame iframe,
-.media-frame video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16/9;
-  border: 0;
-}
-
-
-.navbar .navbar-brand,
-.navbar .nav-link {
-  color: var(--text) !important;           /* белые */
-  text-decoration: none;
-  font-weight: 600;
-  transition: color .2s ease;
-}
-.navbar .nav-link:hover,
-.navbar .nav-link:focus {
-  color: var(--brand) !important;          /* подсветка */
-}
-.navbar .nav-link.active,
-.navbar .nav-link[aria-current="page"] {
-  color: var(--text) !important;           /* активная — тоже белая */
-}
-
-/* в светлой теме ссылки автоматически станут тёмными,
-   потому что :root[data-theme="light"] переопределяет --text */
-:root[data-theme="light"] .navbar .nav-link,
-:root[data-theme="light"] .navbar .navbar-brand {
-  color: var(--text) !important;
+  font:12px/1 system-ui;border-radius:8px;z-index:999999;pointer-events:none
 }

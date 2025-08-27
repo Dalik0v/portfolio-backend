@@ -1,4 +1,3 @@
-# main.py
 from pathlib import Path
 import os
 
@@ -16,11 +15,11 @@ from models import User, Course
 from auth import router as auth_router
 from courses import router as courses_router
 
-app = FastAPI()
-
 # --- Пути к папкам ---
 BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = BASE_DIR if (BASE_DIR / "templates").exists() else BASE_DIR.parent
+ROOT_DIR = BASE_DIR  # не усложняем
+
+app = FastAPI()
 
 # 1) база
 Base.metadata.create_all(bind=engine)
@@ -33,7 +32,7 @@ app.state.templates = templates
 app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="static")
 
 # 4) сессии — секрет берём из окружения
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("c6f46ef010fe98f8f567bed2041c9000ca12a7783a46cac2223cb23d21dc92ce", "dev"))
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SECRET_KEY", "dev"))
 
 # 5) роуты
 app.include_router(auth_router)
@@ -66,11 +65,19 @@ def contact(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("contact.html", {"request": request, "user": user})
 
 @app.post("/contact")
-def contact_post(request: Request, email: str = Form(...), message: str = Form(...), db: Session = Depends(get_db)):
+def contact_post(
+    request: Request,
+    email: str = Form(...),
+    message: str = Form(...),
+    db: Session = Depends(get_db),
+):
     print("CONTACT:", email, message)
     uid = request.session.get("user_id")
     user = db.query(User).get(uid) if uid else None
-    return templates.TemplateResponse("contact.html", {"request": request, "user": user, "success": True})
+    return templates.TemplateResponse(
+        "contact.html",
+        {"request": request, "user": user, "success": True}
+    )
 
 # 7) сид курсов
 def seed_courses():
@@ -103,7 +110,6 @@ def seed_courses():
             db.add_all(demo)
             db.commit()
         else:
-            # обновим видео у существующих курсов (если раньше был рикролл)
             vids = {
                 "Mastering Python for Web": "https://www.youtube.com/embed/AJTtXXXM0z0",
                 "Frontend Basics": "https://www.youtube.com/embed/AJTtXXXM0z0",
