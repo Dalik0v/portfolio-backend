@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }} — Lesson{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="row" style="align-items:flex-start">
+      <!-- Левая колонка: видео + описание -->
+      <div class="col" style="flex:1 1 640px">
+        <div class="card" style="padding:16px">
+          <h1 class="h4 mb-2">{{ course.title }}</h1>
+          <p class="muted mb-3">{{ course.description }}</p>
+
+          {% if course.video_url %}
+            {% set u = course.video_url %}
+            {% set e = u %}
+            {% if 'watch?v=' in u %}
+              {% set e = u | replace('watch?v=', 'embed/') %}
+            {% elif 'youtu.be/' in u %}
+              {% set e = u | replace('youtu.be/', 'www.youtube.com/embed/') %}
+            {% elif '/shorts/' in u %}
+              {% set e = u | replace('/shorts/', '/embed/') %}
+            {% endif %}
+
+            <div class="media-frame mb-3">
+              {% if 'youtube' in u or 'youtu.be' in u %}
+                <iframe
+                  src="{{ e }}?rel=0&modestbranding=1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen
+                  loading="lazy">
+                </iframe>
+              {% else %}
+                <video src="{{ u }}" controls></video>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Правая колонка: покупка/ссылки -->
+      <div class="col" style="flex:1 1 320px; max-width:420px">
+        <div class="card" style="padding:16px">
+          <div class="row" style="align-items:center; margin-bottom:12px">
+            <div class="h5 m-0">Стоимость</div>
+            <div class="spacer"></div>
+            <div class="badge" style="background:var(--panel-2);padding:6px 10px;border-radius:10px;border:1px solid var(--border)">{{ course.price }}$</div>
+          </div>
+
+          {% if owned %}
+            <div class="alert alert-success" style="background:color-mix(in oklab,var(--brand) 12%,transparent);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px">
+              Курс у вас уже куплен.
+            </div>
+            <a class="btn btn-primary w-100 mb-2" href="/my-courses">Перейти к моим курсам</a>
+          {% else %}
+            <form method="post" action="/course/{{ course.id }}/buy">
+              <button class="btn btn-primary w-100">Купить курс</button>
+            </form>
+          {% endif %}
+
+          <a class="btn btn-outline w-100 mt-2" href="/courses">← Ко всем урокам</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

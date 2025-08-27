@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Lessons{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="h4 mb-3">My Lessons</h1>
+    {% if courses|length == 0 %}
+      <div class="card">Пока пусто. Посмотрите доступные уроки на странице <a href="/courses">Lessons</a>.</div>
+    {% else %}
+      <div class="row">
+        {% for c in courses %}
+        <div class="col">
+          <div class="card" style="padding:16px">
+            <h2 class="h5 mb-2">{{ c.title }}</h2>
+            <p class="muted mb-3">{{ c.description }}</p>
+            <a class="btn btn-outline" href="/course/{{ c.id }}">Открыть</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
