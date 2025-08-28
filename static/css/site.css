@@ -148,15 +148,22 @@ body::after{
   font:12px/1 system-ui;border-radius:8px;z-index:999999;pointer-events:none
 }
 
-
-.social-links { display:flex; align-items:center }
-.social-icon img{
-  width:40px; height:40px; border-radius:50%;
-  background:var(--panel-2); padding:8px;
-  border:1px solid var(--border);
-  transition:transform .2s ease, background .2s ease;
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
 }
-.social-icon img:hover{
-  background:var(--brand);
-  transform:scale(1.1);
+.social-icon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--panel-2);
+  padding: 8px;
+  border: 1px solid var(--border);
+  transition: transform .2s ease, background .2s ease;
+}
+.social-icon img:hover {
+  background: var(--brand);
+  transform: scale(1.1);
 }
