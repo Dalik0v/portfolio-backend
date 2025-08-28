@@ -147,3 +147,16 @@ body::after{
   position:fixed;right:10px;bottom:10px;background:#000a;color:#fff;padding:6px 10px;
   font:12px/1 system-ui;border-radius:8px;z-index:999999;pointer-events:none
 }
+
+
+.social-links { display:flex; align-items:center }
+.social-icon img{
+  width:40px; height:40px; border-radius:50%;
+  background:var(--panel-2); padding:8px;
+  border:1px solid var(--border);
+  transition:transform .2s ease, background .2s ease;
+}
+.social-icon img:hover{
+  background:var(--brand);
+  transform:scale(1.1);
+}
