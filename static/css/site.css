@@ -167,3 +167,12 @@ body::after{
   background: var(--brand);
   transform: scale(1.1);
 }
+
+
+.modal-content.card {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
