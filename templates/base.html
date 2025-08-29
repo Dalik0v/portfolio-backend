@@ -25,23 +25,11 @@
       </button>
 
       <div class="collapse navbar-collapse" id="nav">
+        <!-- Основные ссылки -->
         <ul class="navbar-nav ms-auto align-items-center gap-3">
           <li class="nav-item"><a class="nav-link link-top" href="/courses">Lessons</a></li>
           <li class="nav-item"><a class="nav-link link-top" href="/about">About Me</a></li>
           <li class="nav-item"><a class="nav-link link-top" href="/contact">Contact</a></li>
-
-          <!-- Theme menu -->
-          <li class="nav-item dropdown">
-            <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" id="themeMenu" role="button"
-               data-bs-toggle="dropdown" aria-expanded="false">
-              ☰
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
-              <li><a class="dropdown-item theme-option" href="#" data-theme="dark">Dark</a></li>
-              <li><a class="dropdown-item theme-option" href="#" data-theme="light">Light</a></li>
-              <li><a class="dropdown-item theme-option" href="#" data-theme="indigo">Indigo</a></li>
-            </ul>
-          </li>
 
           {% if user %}
             <li class="nav-item">
@@ -58,6 +46,21 @@
               <a class="btn btn-outline-primary btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up</a>
             </li>
           {% endif %}
+        </ul>
+
+        <!-- Отдельный список для бургер-меню тем -->
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item dropdown">
+            <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" id="themeMenu" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              ☰
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+              <li><a class="dropdown-item theme-option" href="#" data-theme="dark">Dark</a></li>
+              <li><a class="dropdown-item theme-option" href="#" data-theme="light">Light</a></li>
+              <li><a class="dropdown-item theme-option" href="#" data-theme="indigo">Indigo</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
@@ -128,7 +131,6 @@
     const root = document.documentElement;
     const key = 'portfolio-theme';
 
-    // функция для установки галочки
     function updateActiveTheme(theme) {
       document.querySelectorAll('.theme-option').forEach(el => {
         el.classList.remove('active');
@@ -138,14 +140,12 @@
       });
     }
 
-    // Загружаем сохранённую тему
     const saved = localStorage.getItem(key);
     if (saved) {
       root.setAttribute('data-theme', saved);
       updateActiveTheme(saved);
     }
 
-    // Обработчик кликов по пунктам меню
     document.addEventListener('click', e => {
       const btn = e.target.closest('.theme-option');
       if (!btn) return;
