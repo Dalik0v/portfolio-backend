@@ -202,3 +202,8 @@ body::after{
   float: right;
   color: var(--brand);
 }
+
+/* убираем стандартный треугольник у dropdown-toggle */
+.dropdown-toggle::after {
+  display: none !important;
+}

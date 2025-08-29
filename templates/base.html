@@ -25,7 +25,6 @@
       </button>
 
       <div class="collapse navbar-collapse" id="nav">
-        <!-- Основные ссылки -->
         <ul class="navbar-nav ms-auto align-items-center gap-3">
           <li class="nav-item"><a class="nav-link link-top" href="/courses">Lessons</a></li>
           <li class="nav-item"><a class="nav-link link-top" href="/about">About Me</a></li>
@@ -46,14 +45,11 @@
               <a class="btn btn-outline-primary btn-sm" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up</a>
             </li>
           {% endif %}
-        </ul>
 
-        <!-- Отдельный список для бургер-меню тем -->
-        <ul class="navbar-nav ms-3">
-          <li class="nav-item dropdown">
-            <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" id="themeMenu" role="button"
-               data-bs-toggle="dropdown" aria-expanded="false">
-              ☰
+          <!-- Themes -->
+          <li class="nav-item dropdown mt-2 mt-lg-0">
+            <a class="nav-link dropdown-toggle" href="#" id="themeMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Themes
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
               <li><a class="dropdown-item theme-option" href="#" data-theme="dark">Dark</a></li>
