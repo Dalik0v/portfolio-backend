@@ -59,11 +59,16 @@
   </main>
 
   <!-- Login Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade {% if login_error %}show{% endif %}" id="loginModal" tabindex="-1" aria-hidden="true" {% if login_error %}style="display:block;"{% endif %}>
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content card">
         <div class="modal-body">
           <h1 class="h5 mb-3 text-center">Welcome Back</h1>
+
+          {% if login_error %}
+            <div class="alert alert-danger">{{ login_error }}</div>
+          {% endif %}
+
           <form method="post" action="/login">
             <div class="mb-3">
               <label class="form-label">Email</label>
@@ -84,11 +89,16 @@
   </div>
 
   <!-- Signup Modal -->
-  <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade {% if register_error %}show{% endif %}" id="signupModal" tabindex="-1" aria-hidden="true" {% if register_error %}style="display:block;"{% endif %}>
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content card">
         <div class="modal-body">
           <h1 class="h5 mb-3 text-center">Sign up</h1>
+
+          {% if register_error %}
+            <div class="alert alert-danger">{{ register_error }}</div>
+          {% endif %}
+
           <form method="post" action="/register">
             <div class="mb-3">
               <label class="form-label">Email</label>

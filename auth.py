@@ -14,28 +14,28 @@ def hash_password(p: str) -> str:
 def verify_password(p: str, hp: str) -> bool:
     return pwd_context.verify(p, hp)
 
-@router.get("/login")
-def login_page(request: Request):
-    return request.app.state.templates.TemplateResponse("auth/login.html", {"request": request})
-
+# === ЛОГИН ===
 @router.post("/login")
 def login(request: Request, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.hashed_password):
-        # простая ошибка — без флешей, чтобы быстро
-        return request.app.state.templates.TemplateResponse("auth/login.html", {"request": request, "error": "Неверный логин или пароль"}, status_code=400)
+        # Ошибка → рендерим главную с модалкой и сообщением
+        return request.app.state.templates.TemplateResponse(
+            "home.html", 
+            {"request": request, "login_error": "Неверный логин или пароль"}
+        )
     request.session["user_id"] = user.id
     return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
-@router.get("/register")
-def register_page(request: Request):
-    return request.app.state.templates.TemplateResponse("auth/register.html", {"request": request})
-
+# === РЕГИСТРАЦИЯ ===
 @router.post("/register")
 def register(request: Request, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
     exists = db.query(User).filter(User.email == email).first()
     if exists:
-        return request.app.state.templates.TemplateResponse("auth/register.html", {"request": request, "error": "Такой email уже есть"}, status_code=400)
+        return request.app.state.templates.TemplateResponse(
+            "home.html", 
+            {"request": request, "register_error": "Такой email уже зарегистрирован"}
+        )
     user = User(email=email, hashed_password=hash_password(password))
     db.add(user)
     db.commit()
@@ -43,6 +43,7 @@ def register(request: Request, email: str = Form(...), password: str = Form(...)
     request.session["user_id"] = user.id
     return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
+# === ЛОГАУТ ===
 @router.get("/logout")
 def logout(request: Request):
     request.session.clear()
