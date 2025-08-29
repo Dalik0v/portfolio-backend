@@ -148,6 +148,7 @@ body::after{
   font:12px/1 system-ui;border-radius:8px;z-index:999999;pointer-events:none
 }
 
+/* ==== SOCIAL ICONS ==== */
 .social-links {
   display: flex;
   align-items: center;
@@ -168,7 +169,7 @@ body::after{
   transform: scale(1.1);
 }
 
-
+/* ==== MODALS ==== */
 .modal-content.card {
   background: var(--panel);
   color: var(--text);
@@ -177,15 +178,27 @@ body::after{
   padding: 20px;
 }
 
+/* ==== THEME DROPDOWN ==== */
 .dropdown-menu {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,.4);
+  min-width: 140px;
+  padding: 6px 0;
 }
 .dropdown-item {
   color: var(--text);
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: background .2s ease, color .2s ease;
 }
 .dropdown-item:hover {
   background: var(--panel-2);
+  color: var(--brand);
+}
+.dropdown-item.active::after {
+  content: " ✓";
+  float: right;
+  color: var(--brand);
 }

@@ -30,15 +30,19 @@
           <li class="nav-item"><a class="nav-link link-top" href="/about">About Me</a></li>
           <li class="nav-item"><a class="nav-link link-top" href="/contact">Contact</a></li>
 
-           <li class="nav-item dropdown">
-               <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="themeMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                ☰
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
-                <li><a class="dropdown-item theme-option" data-theme="dark" href="#">Dark</a></li>
-                 <li><a class="dropdown-item theme-option" data-theme="light" href="#">Light</a></li>
-                      </ul>
-                      </li>
+          <!-- Theme menu -->
+          <li class="nav-item dropdown">
+            <a class="btn btn-outline-light btn-sm dropdown-toggle" href="#" id="themeMenu" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              ☰
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+              <li><a class="dropdown-item theme-option" href="#" data-theme="dark">Dark</a></li>
+              <li><a class="dropdown-item theme-option" href="#" data-theme="light">Light</a></li>
+              <li><a class="dropdown-item theme-option" href="#" data-theme="indigo">Indigo</a></li>
+            </ul>
+          </li>
+
           {% if user %}
             <li class="nav-item">
               <a class="avatar" href="/my-courses" title="{{ user.email }}">
@@ -69,11 +73,9 @@
       <div class="modal-content card">
         <div class="modal-body">
           <h1 class="h5 mb-3 text-center">Welcome Back</h1>
-
           {% if login_error %}
             <div class="alert alert-danger">{{ login_error }}</div>
           {% endif %}
-
           <form method="post" action="/login">
             <div class="mb-3">
               <label class="form-label">Email</label>
@@ -99,11 +101,9 @@
       <div class="modal-content card">
         <div class="modal-body">
           <h1 class="h5 mb-3 text-center">Sign up</h1>
-
           {% if register_error %}
             <div class="alert alert-danger">{{ register_error }}</div>
           {% endif %}
-
           <form method="post" action="/register">
             <div class="mb-3">
               <label class="form-label">Email</label>
@@ -120,18 +120,41 @@
     </div>
   </div>
 
-<script>
-  const root = document.documentElement;
-  const key = 'portfolio-theme';
-  const saved = localStorage.getItem(key);
-  if (saved) root.setAttribute('data-theme', saved);
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  document.querySelectorAll('.theme-option').forEach(el => {
-    el.addEventListener('click', e => {
+  <!-- Theme switcher -->
+  <script>
+    const root = document.documentElement;
+    const key = 'portfolio-theme';
+
+    // функция для установки галочки
+    function updateActiveTheme(theme) {
+      document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.theme === theme) {
+          el.classList.add('active');
+        }
+      });
+    }
+
+    // Загружаем сохранённую тему
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      root.setAttribute('data-theme', saved);
+      updateActiveTheme(saved);
+    }
+
+    // Обработчик кликов по пунктам меню
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('.theme-option');
+      if (!btn) return;
       e.preventDefault();
-      const theme = el.getAttribute('data-theme');
+      const theme = btn.dataset.theme;
       root.setAttribute('data-theme', theme);
       localStorage.setItem(key, theme);
+      updateActiveTheme(theme);
     });
-  });
-</script>
+  </script>
+</body>
+</html>
