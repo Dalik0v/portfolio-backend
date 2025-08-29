@@ -176,3 +176,16 @@ body::after{
   border-radius: 16px;
   padding: 20px;
 }
+
+.dropdown-menu {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.4);
+}
+.dropdown-item {
+  color: var(--text);
+}
+.dropdown-item:hover {
+  background: var(--panel-2);
+}

@@ -30,10 +30,15 @@
           <li class="nav-item"><a class="nav-link link-top" href="/about">About Me</a></li>
           <li class="nav-item"><a class="nav-link link-top" href="/contact">Contact</a></li>
 
-          <li class="nav-item">
-            <button id="themeToggle" class="btn btn-ghost btn-sm" type="button" title="Toggle theme">●</button>
-          </li>
-
+           <li class="nav-item dropdown">
+               <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="themeMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                ☰
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeMenu">
+                <li><a class="dropdown-item theme-option" data-theme="dark" href="#">Dark</a></li>
+                 <li><a class="dropdown-item theme-option" data-theme="light" href="#">Light</a></li>
+                      </ul>
+                      </li>
           {% if user %}
             <li class="nav-item">
               <a class="avatar" href="/my-courses" title="{{ user.email }}">
@@ -115,20 +120,18 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Тема: запоминаем в localStorage
-    const root = document.documentElement;
-    const key = 'portfolio-theme';
-    const saved = localStorage.getItem(key);
-    if (saved) root.setAttribute('data-theme', saved);
+<script>
+  const root = document.documentElement;
+  const key = 'portfolio-theme';
+  const saved = localStorage.getItem(key);
+  if (saved) root.setAttribute('data-theme', saved);
 
-    document.getElementById('themeToggle').onclick = () => {
-      const cur = root.getAttribute('data-theme') || 'dark';
-      const next = cur === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem(key, next);
-    };
-  </script>
-</body>
-</html>
+  document.querySelectorAll('.theme-option').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      const theme = el.getAttribute('data-theme');
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem(key, theme);
+    });
+  });
+</script>
