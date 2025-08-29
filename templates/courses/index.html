@@ -17,7 +17,14 @@
             <div class="row" style="align-items:center">
               <div style="font-weight:600">{{ c.price }}$</div>
               <div class="spacer"></div>
-              <a class="btn btn-outline" href="/course/{{ c.id }}">Open</a>
+
+              {% if not user %}
+                <!-- Гость → открываем модалку входа -->
+                <a class="btn btn-outline" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Open</a>
+              {% else %}
+                <!-- Авторизован → можно открыть курс -->
+                <a class="btn btn-outline" href="/course/{{ c.id }}">Open</a>
+              {% endif %}
             </div>
           </div>
         </div>

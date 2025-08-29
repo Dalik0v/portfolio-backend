@@ -74,3 +74,24 @@ def my_courses(request: Request, db: Session = Depends(get_db)):
     return request.app.state.templates.TemplateResponse(
         "courses/my.html", {"request": request, "user": user, "courses": courses}
     )
+
+@router.get("/course/{course_id}")
+def course_detail(course_id: int, request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    course = db.query(Course).get(course_id)
+    if not course:
+        return RedirectResponse(url="/courses", status_code=status.HTTP_302_FOUND)
+
+    owned = False
+    if user:
+        owned = db.query(UserCourse).filter_by(user_id=user.id, course_id=course.id).first() is not None
+
+    return request.app.state.templates.TemplateResponse(
+        "courses/detail.html",
+        {
+            "request": request,
+            "user": user,
+            "course": course,
+            "owned": owned
+        }
+    )

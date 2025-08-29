@@ -4,36 +4,44 @@
 <section class="section">
   <div class="container">
     <div class="row" style="align-items:flex-start">
-      <!-- Левая колонка: видео + описание -->
+      <!-- Левая колонка: превью или видео -->
       <div class="col" style="flex:1 1 640px">
         <div class="card" style="padding:16px">
           <h1 class="h4 mb-2">{{ course.title }}</h1>
           <p class="muted mb-3">{{ course.description }}</p>
 
-          {% if course.video_url %}
-            {% set u = course.video_url %}
-            {% set e = u %}
-            {% if 'watch?v=' in u %}
-              {% set e = u | replace('watch?v=', 'embed/') %}
-            {% elif 'youtu.be/' in u %}
-              {% set e = u | replace('youtu.be/', 'www.youtube.com/embed/') %}
-            {% elif '/shorts/' in u %}
-              {% set e = u | replace('/shorts/', '/embed/') %}
-            {% endif %}
-
-            <div class="media-frame mb-3">
-              {% if 'youtube' in u or 'youtu.be' in u %}
-                <iframe
-                  src="{{ e }}?rel=0&modestbranding=1"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen
-                  loading="lazy">
-                </iframe>
-              {% else %}
-                <video src="{{ u }}" controls></video>
+          {% if user and owned %}
+            {# ===== ВИДЕО, ЕСЛИ КУРС КУПЛЕН ===== #}
+            {% if course.video_url %}
+              {% set u = course.video_url %}
+              {% set e = u %}
+              {% if 'watch?v=' in u %}
+                {% set e = u | replace('watch?v=', 'embed/') %}
+              {% elif 'youtu.be/' in u %}
+                {% set e = u | replace('youtu.be/', 'www.youtube.com/embed/') %}
+              {% elif '/shorts/' in u %}
+                {% set e = u | replace('/shorts/', '/embed/') %}
               {% endif %}
-            </div>
+
+              <div class="media-frame mb-3">
+                {% if 'youtube' in u or 'youtu.be' in u %}
+                  <iframe
+                    src="{{ e }}?rel=0&modestbranding=1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                    loading="lazy">
+                  </iframe>
+                {% else %}
+                  <video src="{{ u }}" controls></video>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% else %}
+            {# ===== ПРЕВЬЮ (КАРТИНКА), ЕСЛИ КУРС НЕ КУПЛЕН ===== #}
+            {% if course.image_url %}
+              <img src="{{ course.image_url }}" alt="{{ course.title }}" class="w-100 mb-3" style="border-radius:12px">
+            {% endif %}
           {% endif %}
         </div>
       </div>
@@ -44,15 +52,24 @@
           <div class="row" style="align-items:center; margin-bottom:12px">
             <div class="h5 m-0">Стоимость</div>
             <div class="spacer"></div>
-            <div class="badge" style="background:var(--panel-2);padding:6px 10px;border-radius:10px;border:1px solid var(--border)">{{ course.price }}$</div>
+            <div class="badge" style="background:var(--panel-2);padding:6px 10px;border-radius:10px;border:1px solid var(--border)">
+              {{ course.price }}$
+            </div>
           </div>
 
-          {% if owned %}
+          {% if not user %}
+            <!-- Не залогинен -->
+            <a class="btn btn-primary w-100" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+              Log in to buy
+            </a>
+          {% elif owned %}
+            <!-- Уже куплен -->
             <div class="alert alert-success" style="background:color-mix(in oklab,var(--brand) 12%,transparent);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px">
               Курс у вас уже куплен.
             </div>
             <a class="btn btn-primary w-100 mb-2" href="/my-courses">Перейти к моим курсам</a>
           {% else %}
+            <!-- Авторизован, но не купил -->
             <form method="post" action="/course/{{ course.id }}/buy">
               <button class="btn btn-primary w-100">Купить курс</button>
             </form>
