@@ -17,3 +17,6 @@ psycopg2-binary==2.9.9   # для PostgreSQL в проде
 gunicorn==21.2.0
 
 itsdangerous==2.2.0
+
+# Платежи
+stripe==10.0.0
