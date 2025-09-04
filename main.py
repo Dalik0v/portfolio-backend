@@ -124,3 +124,8 @@ def seed_courses():
         db.close()
 
 seed_courses()
+
+
+
+from payments import router as payments_router
+app.include_router(payments_router)
