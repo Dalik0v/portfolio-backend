@@ -23,7 +23,7 @@ load_dotenv()
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
 
-print("DEBUG STRIPE KEY:", stripe.api_key)  # ⚡ проверка в логах
+print("DEBUG STRIPE KEY:", stripe.api_key)
 
 # --- Пути к папкам ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -43,7 +43,13 @@ app.state.templates = templates
 app.mount("/static", StaticFiles(directory=str(ROOT_DIR / "static")), name="static")
 
 # --- Сессии ---
-app.add_middleware(SessionMiddleware, secret_key=os.getenv("SECRET_KEY", "dev"))
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY", "dev"),
+    session_cookie="portfolio_session",
+    same_site="lax",
+    https_only=True,
+)
 
 # --- Роуты ---
 app.include_router(auth_router)
@@ -52,7 +58,7 @@ app.include_router(courses_router)
 # === PAYMENTS ===
 @app.post("/course/{course_id}/buy")
 def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
-    print("DEBUG SESSION FULL (buy):", dict(request.session))  # 👈 вся сессия
+    print("DEBUG SESSION FULL (buy):", dict(request.session))
     user_id = request.session.get("user_id")
     print("DEBUG SESSION user_id:", user_id)
 
@@ -63,7 +69,6 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
-    # Проверка, куплен ли курс
     owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
     print("DEBUG BUY:", user_id, course_id, owned)
     if owned:
@@ -84,6 +89,8 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
             success_url=f"{APP_DOMAIN}/payment/success?session_id={{CHECKOUT_SESSION_ID}}&course_id={course.id}",
             cancel_url=f"{APP_DOMAIN}/payment/cancel?course_id={course.id}",
         )
+        print("DEBUG STRIPE SESSION:", session)
+        print("DEBUG STRIPE URL:", session.url)
         return RedirectResponse(session.url, status_code=303)
     except Exception as e:
         print("Stripe error:", e)
@@ -126,7 +133,7 @@ def payment_cancel(request: Request, course_id: int, db: Session = Depends(get_d
 # === Главная ===
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
-    print("DEBUG SESSION FULL (home):", dict(request.session))  # 👈 вся сессия
+    print("DEBUG SESSION FULL (home):", dict(request.session))
     uid = request.session.get("user_id")
     user = db.query(User).get(uid) if uid else None
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
