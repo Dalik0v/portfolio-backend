@@ -20,8 +20,11 @@ from fastapi.responses import RedirectResponse
 load_dotenv()
 
 # Stripe
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")   # ✅ берём ключ из .env / Railway Variables
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")   # ✅ ключ берём из .env или Railway Variables
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
+
+# ⚡ Отладка: выведем ключ в логи (в продакшене должно быть sk_test_... / sk_live_...)
+print("DEBUG STRIPE KEY:", stripe.api_key)
 
 # --- Пути к папкам ---
 BASE_DIR = Path(__file__).resolve().parent
