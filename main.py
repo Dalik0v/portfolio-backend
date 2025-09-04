@@ -19,8 +19,8 @@ from fastapi.responses import RedirectResponse
 # --- Загружаем .env ---
 load_dotenv()
 
-# Stripe (ключи подтягиваются из .env или Railway Variables)
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+# Stripe
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")   # ✅ берём ключ из .env / Railway Variables
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
 
 # --- Пути к папкам ---
@@ -58,22 +58,26 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
-    # создаём оплату в Stripe
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        mode="payment",
-        line_items=[{
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": course.title},
-                "unit_amount": course.price * 100,  # цена в центах
-            },
-            "quantity": 1,
-        }],
-        success_url=f"{APP_DOMAIN}/payment/success?session_id={{CHECKOUT_SESSION_ID}}&course_id={course.id}",
-        cancel_url=f"{APP_DOMAIN}/payment/cancel",
-    )
-    return RedirectResponse(session.url, status_code=303)
+    try:
+        # создаём оплату в Stripe
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            mode="payment",
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": course.title},
+                    "unit_amount": course.price * 100,  # цена в центах
+                },
+                "quantity": 1,
+            }],
+            success_url=f"{APP_DOMAIN}/payment/success?session_id={{CHECKOUT_SESSION_ID}}&course_id={course.id}",
+            cancel_url=f"{APP_DOMAIN}/payment/cancel",
+        )
+        return RedirectResponse(session.url, status_code=303)
+    except Exception as e:
+        print("Stripe error:", e)  # ⚠️ лог для отладки
+        return RedirectResponse(url="/courses")
 
 
 @app.get("/payment/success")
@@ -82,7 +86,6 @@ def payment_success(session_id: str, course_id: int, request: Request, db: Sessi
     if not user_id:
         return RedirectResponse(url="/login")
 
-    # проверим в Stripe
     session = stripe.checkout.Session.retrieve(session_id)
     if session.payment_status == "paid":
         exists = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
