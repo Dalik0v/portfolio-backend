@@ -52,8 +52,9 @@ app.include_router(courses_router)
 # === PAYMENTS ===
 @app.post("/course/{course_id}/buy")
 def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
+    print("DEBUG SESSION FULL (buy):", dict(request.session))  # 👈 вся сессия
     user_id = request.session.get("user_id")
-    print("DEBUG SESSION user_id:", user_id)  # 👈 кто в сессии
+    print("DEBUG SESSION user_id:", user_id)
 
     if not user_id:
         return RedirectResponse(url="/login")
@@ -64,7 +65,7 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
 
     # Проверка, куплен ли курс
     owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
-    print("DEBUG BUY:", user_id, course_id, owned)  # 👈 проверка в логах
+    print("DEBUG BUY:", user_id, course_id, owned)
     if owned:
         return RedirectResponse(url="/my-courses")
 
@@ -125,6 +126,7 @@ def payment_cancel(request: Request, course_id: int, db: Session = Depends(get_d
 # === Главная ===
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
+    print("DEBUG SESSION FULL (home):", dict(request.session))  # 👈 вся сессия
     uid = request.session.get("user_id")
     user = db.query(User).get(uid) if uid else None
     return templates.TemplateResponse("home.html", {"request": request, "user": user})
