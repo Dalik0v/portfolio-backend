@@ -4,9 +4,12 @@
 <section class="section">
   <div class="container">
     <div class="card text-center p-5">
-      <h1 class="h3 mb-3">❌ Оплата отменена</h1>
-      <p class="muted mb-4">Вы можете попробовать снова в любое время.</p>
-      <a href="/courses" class="btn btn-outline">← Вернуться к курсам</a>
+      <h1 class="h3 mb-3 text-warning">⚠️ Оплата отменена</h1>
+      <p class="muted mb-4">
+        Вы отменили оплату курса <b>{{ course.title }}</b>.  
+        Но вы всегда можете попробовать снова.
+      </p>
+      <a href="/courses" class="btn btn-outline">← Вернуться ко всем курсам</a>
     </div>
   </div>
 </section>

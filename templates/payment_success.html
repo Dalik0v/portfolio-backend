@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Оплата успешна{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="card text-center p-5">
+      <h1 class="h3 mb-3 text-success">✅ Оплата успешна!</h1>
+      <p class="muted mb-4">
+        Спасибо за покупку курса <b>{{ course.title }}</b>.  
+        Теперь он доступен в разделе <b>«Мои курсы»</b>.
+      </p>
+      <a href="/my-courses" class="btn btn-primary">Перейти к моим курсам</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

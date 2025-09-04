@@ -20,11 +20,10 @@ from fastapi.responses import RedirectResponse
 load_dotenv()
 
 # Stripe
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")   # ✅ ключ берём из .env или Railway Variables
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
 
-# ⚡ Отладка: выведем ключ в логи (в продакшене должно быть sk_test_... / sk_live_...)
-print("DEBUG STRIPE KEY:", stripe.api_key)
+print("DEBUG STRIPE KEY:", stripe.api_key)  # ⚡ для проверки в логах
 
 # --- Пути к папкам ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -61,8 +60,12 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
+    # Проверка: если курс уже куплен → сразу в "Мои курсы"
+    owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
+    if owned:
+        return RedirectResponse(url="/my-courses")
+
     try:
-        # создаём оплату в Stripe
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             mode="payment",
@@ -70,16 +73,16 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
                 "price_data": {
                     "currency": "usd",
                     "product_data": {"name": course.title},
-                    "unit_amount": course.price * 100,  # цена в центах
+                    "unit_amount": course.price * 100,
                 },
                 "quantity": 1,
             }],
             success_url=f"{APP_DOMAIN}/payment/success?session_id={{CHECKOUT_SESSION_ID}}&course_id={course.id}",
-            cancel_url=f"{APP_DOMAIN}/payment/cancel",
+            cancel_url=f"{APP_DOMAIN}/payment/cancel?course_id={course.id}",
         )
         return RedirectResponse(session.url, status_code=303)
     except Exception as e:
-        print("Stripe error:", e)  # ⚠️ лог для отладки
+        print("Stripe error:", e)
         return RedirectResponse(url="/courses")
 
 
@@ -88,6 +91,10 @@ def payment_success(session_id: str, course_id: int, request: Request, db: Sessi
     user_id = request.session.get("user_id")
     if not user_id:
         return RedirectResponse(url="/login")
+
+    course = db.query(Course).get(course_id)
+    if not course:
+        return RedirectResponse(url="/courses")
 
     session = stripe.checkout.Session.retrieve(session_id)
     if session.payment_status == "paid":
@@ -98,15 +105,19 @@ def payment_success(session_id: str, course_id: int, request: Request, db: Sessi
 
     return templates.TemplateResponse(
         "payment_success.html",
-        {"request": request, "user": db.query(User).get(user_id)},
+        {"request": request, "user": db.query(User).get(user_id), "course": course},
     )
 
 
 @app.get("/payment/cancel")
-def payment_cancel(request: Request, db: Session = Depends(get_db)):
+def payment_cancel(request: Request, course_id: int, db: Session = Depends(get_db)):
     uid = request.session.get("user_id")
     user = db.query(User).get(uid) if uid else None
-    return templates.TemplateResponse("payment_cancel.html", {"request": request, "user": user})
+    course = db.query(Course).get(course_id)
+    return templates.TemplateResponse(
+        "payment_cancel.html",
+        {"request": request, "user": user, "course": course},
+    )
 
 # === Главная ===
 @app.get("/")
