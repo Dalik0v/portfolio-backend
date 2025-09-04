@@ -14,12 +14,13 @@ from auth import router as auth_router
 from courses import router as courses_router
 
 import stripe
+from fastapi.responses import RedirectResponse
 
 # --- Загружаем .env ---
 load_dotenv()
 
-# Stripe
-stripe.api_key = os.getenv("sk_test_51S3hu5HGFepJfndUCgpHRMmInhenTTZz1RshpVx1t0MaqFblgWuj6iZrabL7T3PYvweg9NSBkAiDnV3L5faZIpz600RjoNgOr8")
+# Stripe (ключи подтягиваются из .env или Railway Variables)
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
 
 # --- Пути к папкам ---
@@ -47,8 +48,6 @@ app.include_router(auth_router)
 app.include_router(courses_router)
 
 # === PAYMENTS ===
-from fastapi.responses import RedirectResponse
-
 @app.post("/course/{course_id}/buy")
 def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
@@ -91,7 +90,10 @@ def payment_success(session_id: str, course_id: int, request: Request, db: Sessi
             db.add(UserCourse(user_id=user_id, course_id=course_id))
             db.commit()
 
-    return templates.TemplateResponse("payment_success.html", {"request": request, "user": db.query(User).get(user_id)})
+    return templates.TemplateResponse(
+        "payment_success.html",
+        {"request": request, "user": db.query(User).get(user_id)},
+    )
 
 
 @app.get("/payment/cancel")
