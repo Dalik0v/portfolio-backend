@@ -23,7 +23,7 @@ load_dotenv()
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 APP_DOMAIN = os.getenv("APP_DOMAIN", "http://localhost:8000")
 
-print("DEBUG STRIPE KEY:", stripe.api_key)  # ⚡ для проверки в логах
+print("DEBUG STRIPE KEY:", stripe.api_key)  # ⚡ проверка в логах
 
 # --- Пути к папкам ---
 BASE_DIR = Path(__file__).resolve().parent
@@ -53,6 +53,8 @@ app.include_router(courses_router)
 @app.post("/course/{course_id}/buy")
 def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     user_id = request.session.get("user_id")
+    print("DEBUG SESSION user_id:", user_id)  # 👈 кто в сессии
+
     if not user_id:
         return RedirectResponse(url="/login")
 
@@ -60,8 +62,9 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
-    # Проверка: если курс уже куплен → сразу в "Мои курсы"
+    # Проверка, куплен ли курс
     owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
+    print("DEBUG BUY:", user_id, course_id, owned)  # 👈 проверка в логах
     if owned:
         return RedirectResponse(url="/my-courses")
 
