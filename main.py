@@ -130,6 +130,19 @@ def payment_cancel(request: Request, course_id: int, db: Session = Depends(get_d
         {"request": request, "user": user, "course": course},
     )
 
+# === ADMIN ===
+@app.get("/admin/reset-courses")
+def admin_reset_courses(request: Request, db: Session = Depends(get_db)):
+    """Очистить все покупки (user_courses). Только для user_id=1."""
+    uid = request.session.get("user_id")
+    if not uid or uid != 1:
+        return RedirectResponse(url="/", status_code=302)
+
+    deleted = db.query(UserCourse).delete()
+    db.commit()
+    print(f"DEBUG ADMIN: удалено {deleted} записей из user_courses")
+    return {"status": "ok", "deleted": deleted}
+
 # === Главная ===
 @app.get("/")
 def home(request: Request, db: Session = Depends(get_db)):
