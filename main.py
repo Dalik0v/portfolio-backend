@@ -69,8 +69,11 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
+    # 🔎 проверяем, что реально в user_courses
     owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
-    print("DEBUG BUY:", user_id, course_id, owned)
+    print("DEBUG BUY:", user_id, course_id)
+    print("DEBUG OWNED:", owned)
+
     if owned:
         return RedirectResponse(url="/my-courses")
 
@@ -108,6 +111,8 @@ def payment_success(session_id: str, course_id: int, request: Request, db: Sessi
         return RedirectResponse(url="/courses")
 
     session = stripe.checkout.Session.retrieve(session_id)
+    print("DEBUG SUCCESS:", session_id, session.payment_status)
+
     if session.payment_status == "paid":
         exists = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
         if not exists:
