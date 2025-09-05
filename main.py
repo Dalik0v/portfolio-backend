@@ -69,13 +69,14 @@ def buy_course(course_id: int, request: Request, db: Session = Depends(get_db)):
     if not course:
         return RedirectResponse(url="/courses")
 
-    # 🔎 проверяем, что реально в user_courses
+    # Проверяем, что в базе
     owned = db.query(UserCourse).filter_by(user_id=user_id, course_id=course_id).first()
     print("DEBUG BUY:", user_id, course_id)
-    print("DEBUG OWNED:", owned)
+    print("DEBUG OWNED RAW:", owned)
 
-    if owned:
-        return RedirectResponse(url="/my-courses")
+    # ⚠️ Временно отключаем проверку, чтобы всегда идти в Stripe
+    # if owned:
+    #     return RedirectResponse(url="/my-courses")
 
     try:
         session = stripe.checkout.Session.create(
